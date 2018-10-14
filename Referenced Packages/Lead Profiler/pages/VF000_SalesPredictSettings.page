@@ -1,0 +1,97 @@
+<apex:page standardStylesheets="true" showHeader="true" sidebar="false" controller="LeadsProfiler.CTRL000_SalesPredictSettings" tabStyle="Leads_Profiler_Settings__tab" action="{!init}">
+  <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery-1.7.1.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery-ui-1.8.18.min.js')}" />
+  <apex:includeScript value="{!$Resource.LeadsProfiler__SettingWizardJS}" />
+  <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'css/ui-lightness/jquery-ui-1.7.2.custom.css')}" />
+  <apex:stylesheet value="{!$Resource.LeadsProfiler__SettingWizardStyle}" />
+  <script type="text/javascript">//hello
+    $(document).ready(function () {
+      initMultiSelect();
+      upsellUpgradeSelector();
+      $("div[id*='LeadStatusMapping'] div[class='selected'] .ui-element").each(function () {
+        $("div[id*='LeadStatusMapping'] div[class='available'] .ui-element[title='" + $(this).text() + "']").hide();
+      });
+      if ($("[id*='fscStatusIsConverted']").attr("checked")) {
+        $("[id*='qualifiedBlock']").closest("tr").hide();
+      }
+      $("[id*='fscStatusIsConverted']").bind("change", function () {
+        console.log(this.checked);
+        if (this.checked) {
+          $("[id*='qualifiedBlock']").closest("tr").hide(500);
+        } else {
+          $("[id*='qualifiedBlock']").closest("tr").show(500);
+        }
+      });
+    });
+    initMultiSelect = function () {
+      $(".multiselect").multiselect({
+        doubleClickable: false
+      }); //,limit:10});
+    }
+  </script>
+  <apex:form >
+    <apex:actionFunction name="upgradeToUpsell" action="{!upgradeToUpsell}" status="loading" rerender="errorMessages" oncomplete="initMultiSelect();" />
+    <apex:pageBlock id="myblock2" mode="maindetail" Title="LeadsProfiler settings">
+      <apex:pageMessages id="errorMessages"></apex:pageMessages>
+      <apex:pageBlockButtons >
+        <apex:commandButton action="{!save}" value="Save" />
+        <apex:commandButton action="{!cancel}" value="Cancel" />
+      </apex:pageBlockButtons>
+      <apex:pageBlockSection Title="Lead Last Sync Result" columns="1" rendered="{!isDebug}">
+        <apex:outputField value="{!lastResult.LeadsProfiler__Error_Description__c}" />
+        <apex:outputField value="{!lastResult.LeadsProfiler__Error_Code__c}" />
+        <apex:outputField value="{!lastResult.LeadsProfiler__Finished__c}" />
+        <apex:outputField value="{!lastResult.LeadsProfiler__Get_Sync_Results_Job_Id__c}" />
+        <apex:outputField value="{!lastResult.LeadsProfiler__Started__c}" />
+        <apex:outputField value="{!lastResult.LeadsProfiler__Success__c}" />
+        <apex:outputField value="{!lastResult.LeadsProfiler__Get_Ranks_Job_Id__c}" />
+        <apex:outputField value="{!lastResult.LeadsProfiler__Initiate_Sync_Job_Id__c}" />
+        <apex:outputField value="{!lastResult.LeadsProfiler__Next_Sync_Date__c}" /></apex:pageBlockSection>
+      <!-- <apex:pageBlockSection Title="LeadsProfiler settings" columns="1">
+         
+<apex:inputField value="{!csp.spSettings.Amount_of_days_to_process__c}" />
+<apex:inputField value="{!csp.spSettings.Competitors__c}" />
+
+        <apex:pageBlockSectionItem >Select users to access LeadsProfiler
+          <c:FieldSet Ctrl="{!fscUsers}" id="fscUsers" />
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection> -->
+      <apex:pageBlockSection id="LeadStatusMapping" Title="Lead Status Mapping" columns="1" rendered="{!isLeadProfilingEnabled}">
+        <apex:pageBlockSectionItem >Treat converted as qualified?
+          <apex:inputCheckbox id="fscStatusIsConverted" value="{!fscStatusIsConverted}" /></apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >Open
+          <c:FieldSet Ctrl="{!fscStatusOpened}" id="fscStatusOpened" />
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem id="qualifiedBlock">Qualified
+          <c:FieldSet Ctrl="{!fscStatusClosed}" id="fscStatusClosed"
+          isConverted="{!fscStatusIsConverted}" 
+          clearIfIsConverted="true" />
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >Unqualified
+          <c:FieldSet Ctrl="{!fscStatusLost}" id="fscStatusLost" />
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Leads Profiller Settings" columns="1">
+        <apex:pageBlockSectionItem >
+          <apex:commandButton action="{!changeObjectTypeToLead}" value="Show Leads Tab"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:commandButton action="{!changeObjectTypeToOpportunity}" value="Show Opporunities Tab"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:commandButton action="{!changeObjectTypeToLeadAndOpportunity}" value="Show Leads and Opporunities Tab"/>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection collapsible="false" columns="1" Title="">
+        <apex:outputLink value="https://login.salesforce.com/services/oauth2/authorize" target="_blank">[Renew Refresh Token]
+          <apex:param name="response_type" value="code" />
+          <apex:param name="client_id" value="{!ConsumerKey}" />
+          <apex:param name="redirect_uri" value="{!URLENCODE(oauthCallBack)}" />
+          <apex:param name="state" value="Renew" />
+          <apex:param name="display" value="popup" />
+        </apex:outputLink>
+          <!-- <apex:commandButton action="{!moveProd}" value="Move to 2nd Production" onclick="return confirm('Are you sure?');"/> -->
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

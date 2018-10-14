@@ -1,0 +1,274 @@
+<apex:page standardStylesheets="true" showHeader="true" sidebar="false" controller="LeadsProfiler.CTRL000_SettingsWizard" tabStyle="Leads_Profiler_Settings__tab" action="{!init}">
+  <html lang="en">
+
+  <head></head>
+
+  <body>
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery-1.7.1.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery-ui-1.8.18.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery/tooltip.js')}" />
+    <apex:includeScript value="{!$Resource.LeadsProfiler__SettingWizardJS}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'css/ui-lightness/jquery-ui-1.7.2.custom.css')}" />
+    <apex:stylesheet value="{!$Resource.LeadsProfiler__SettingWizardStyle}" />
+    <script>
+      var dialog;
+      var isAdminOrg = {!isAdminOrg};
+      $(document).ready(function () {
+          $("div[id*='LeadStatusMapping'] div[class='selected'] .ui-element").each(function () {
+          $("div[id*='LeadStatusMapping'] div[class='available'] .ui-element[title='" + $(this).text() + "']").hide();
+        });
+        if ($("[id*='fscStatusIsConverted']").attr("checked")) {
+          $("[id*='qualifiedBlock']").closest("tr").hide();
+        }
+        $("[id*='fscStatusIsConverted']").bind("change", function () {
+          console.log(this.checked);
+          if (this.checked) {
+            $("[id*='qualifiedBlock']").closest("tr").hide(500);
+          } else {
+            $("[id*='qualifiedBlock']").closest("tr").show(500);
+          }
+        });
+        checkBtnAllowSalesForce();
+        if (window.location.href.indexOf("stage=") == -1) {
+          contactsFieldsSelector();
+        }
+        initDialog();
+        $("div[id*='LeadStatusMapping'] div[class='selected'] .ui-element").each(function () {
+          $("div[id*='LeadStatusMapping'] div[class='available'] .ui-element[title='" + $(this).text() + "']").hide();
+        });
+      });
+      initDialog = function () {
+        if (typeof (dialog) !== "undefined")
+          dialog.dialog("destroy").remove();
+        // get percent of screen size
+        var wWidth = $(window).width();
+        wWidth = wWidth * 0.60;
+        var wHeight = $(window).height();
+        wHeight = wHeight * 0.85;
+        dialog = $("#settingsDialog").dialog({
+          // title: 'SalesPredict Installtion ',
+          //height: {!IF ( currentStage == 2 , 800  , 350 )} ,
+          height: wHeight,
+          width: wWidth,
+          modal: true,
+          closeOnEscape: false,
+          autoOpen: false,
+          draggable: true,
+          resizable: true,
+          dialogClass: 'no-close'
+        });
+        dialog.dialog("widget").append($("#customButtons")); 
+        <apex:outputPanel layout="none" rendered="{! currentStage <= numOfStages}">
+          dialog.dialog("widget").find('.ui-dialog-titlebar').append('<span style="float:left;">SalesPredict Installation - Stage {!currentStage}/{!numOfStages}</span>');
+        </apex:outputPanel>
+    
+      dialog.dialog("open");
+      initMultiSelect();
+      
+      }
+
+      initMultiSelect = function() {
+        try {
+          $(".multiselect").multiselect({
+            doubleClickable:false});
+        }
+        catch(e){
+
+        }
+      }
+    </script>
+    <style>
+    .unusedStatuses_tooltip:hover::before,
+    .unqualified_tooltip:hover::before {
+      position :absolute;
+      top:18px;
+      left:0px;
+      display:block;
+      max-width: 162px;
+      border:1px solid lightgray; 
+      border-radius: 4px;
+      padding:7px;
+      background: lightyellow;
+      text-align:left;
+      content:" ";
+      z-index: 100;
+    }
+
+    .unqualified_tooltip:hover::before {
+      
+      content:'The "unqualified" statuses will be used by the system to determine which leads are closed as lost. A lead is considered as qualified if it was converted to an opportunity. The system will learn from qualified and unqualified statuses, and will use that to predict the qualification chance for open leads.';
+    }
+    .unusedStatuses_tooltip:hover::before {
+      
+      content:'Leads with one of the the "should not rank" statuses will not be ranked by the system, and will not receive a score.';
+    }
+
+    .ui-dialog .ui-dialog-titlebar {
+      
+      background-position-x: 98%;
+      background-position-y: center;
+      background-repeat: no-repeat;
+      background-size: 100px;
+
+      }
+    </style>
+    <apex:outputPanel layout="block" id="myPage">
+      <apex:form style="height:100%">
+        <div id="hiddenInputs"> <span class="webService">
+              <apex:inputHidden value="{!csp.spSettings.LeadsProfiler__SalesPredict_service_URL__c}" />
+            </span>
+          <span class="numOfStages">
+              <apex:inputHidden value="{!numOfStages}" />
+            </span>
+          <span class="currentStage">
+              <apex:inputHidden value="{!currentStage}" />
+            </span>
+        </div>
+      </apex:form>
+      <div id="settingsDialog">
+        <apex:form style="height:100%" id="settingsDialog-form">
+          <apex:actionFunction name="install" action="{!install}" status="loading" rerender="myPage" oncomplete="initDialog();" />
+          <apex:actionFunction name="saveSettings" action="{!saveSettings}" status="loading" rerender="errorMessages" oncomplete="initMultiSelect();" />
+          <apex:actionFunction name="saveUsers" action="{!saveUsers}" status="loading" rerender="errorMessages" oncomplete="initMultiSelect();" />
+          <apex:actionFunction name="cancel" action="{!cancel}" />
+          <apex:actionStatus id="loading" onstart="waitCursor(true)" onstop="waitCursor(false)" />
+          <apex:pageBlock mode="maindetail" id="dialogPB">
+            <apex:pageMessages id="errorMessages"></apex:pageMessages>
+            <!-- PAGE 1 -->
+            <apex:outputPanel layout="block" rendered="{!currentStage == 1}" id="dialogPB-panel">
+              <apex:pageBlockSection collapsible="false" columns="1" id="dialogPB-section" Title="Choose Environment" rendered="{!isAdminOrg}">
+                <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Web Service:" for="webService" />
+                  <apex:selectList id="webService" styleClass="webService" value="{!environmentCombo}" size="1">
+                    <apex:selectOption itemValue="prod" itemLabel="Production" />
+                    <apex:selectOption itemValue="prod2" itemLabel="2nd Production" />
+                    <apex:selectOption itemValue="Simulation2" itemLabel="Simulation 2" />
+                    <apex:selectOption itemValue="test" itemLabel="Test" />
+                    <apex:selectOption itemValue="staging" itemLabel="Staging" />
+                    <apex:selectOption itemValue="prod3" itemLabel="Dreamforce" />
+                  </apex:selectList>
+                </apex:pageBlockSectionItem>
+              </apex:pageBlockSection>
+
+              <apex:pageBlockSection collapsible="false" columns="1" id="dialogPB-section2" Title="Installation Code" rendered="{!!isAdminOrg}">
+              <apex:pageBlockSectionItem >
+                Please use the installation code provided to you by SalesPredict. Contact <a href="mailto:support@salespredict.com">support@salespredict.com</a> if you do not have one
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Code:" for="couponNo" style="display: block; margin:5px 7px; text-align: left"></apex:outputLabel>
+                  <apex:inputText value="{!CouponNo}" id="couponNo" onkeyup="checkBtnAllowSalesForce()"></apex:inputText>
+                </apex:pageBlockSectionItem>
+              </apex:pageBlockSection>
+<!-- 
+              <apex:pageBlockSection collapsible="false" columns="1" id="dialogPB-section3" Title="Choose Environment" rendered="{!!isAdminOrg}">
+                <apex:pageBlockSectionItem >
+                  <apex:outputLabel value="Web Service:" for="webService" />
+                  <apex:selectList id="webService" styleClass="webService" value="{!environmentCombo}" size="1">
+                      <apex:selectOption itemValue="prod" itemLabel="Production" />
+                      <apex:selectOption itemValue="prod2" itemLabel="2nd Production" />
+                      <apex:selectOption itemValue="prod3" itemLabel="Dreamforce" />
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+              </apex:pageBlockSection> 
+                <br/>-->
+<!--               <apex:pageBlockSection collapsible="false" columns="1" Title="Allow Access to SalesForce">
+                <apex:pageBlockSectionItem >
+                  <input type="checkbox" id="allowSalesforce" onclick="checkBtnAllowSalesForce();" />
+                  <label for="allowSalesforce">Allow LeadsProfiler to access your SalesForce data</label>
+                </apex:pageBlockSectionItem>
+              </apex:pageBlockSection> -->
+              <br/>
+              <apex:pageBlockSection collapsible="false" columns="1" Title="SalesPredict Support">
+                <apex:pageBlockSectionItem >
+                  <apex:selectRadio value="{!objectType}" layout="pageDirection">
+                    <apex:selectOptions value="{!items}" /></apex:selectRadio>
+                </apex:pageBlockSectionItem>
+              </apex:pageBlockSection>
+              <div id="contactsFields" style="display:none">
+                <h5 style="color: red; padding-left: 20px">
+                        Contact Status Field:
+                      </h5>
+                <apex:selectList value="{!contactField}" size="1">
+                  <apex:selectOptions value="{!contactsFields}" /></apex:selectList>
+              </div>
+              <br/>
+              <!-- <apex:pageBlockSection collapsible="false" columns="1" Title="">
+                <apex:pageBlockSectionItem >
+                  <apex:outputPanel >
+                    <apex:inputCheckbox id="upsellSupport" value="{!isUpsellEnabled}" onclick="checkBtnAllowSalesForce();" />
+                    <label for="upsellSupport" style="font-weight:bold;">Upsell Profiler Support</label>
+                  </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+              </apex:pageBlockSection> -->
+              <div id="accountsUpsellFields" style="display:none">
+                <h5 style="color: red; padding-left: 20px">
+                          Opportunity Upsell Status Field:
+                        </h5>
+                <apex:selectList value="{!accountUpsellField}" size="1">
+                  <apex:selectOptions value="{!accountsUpsellFields}" /></apex:selectList>
+              </div>
+            </apex:outputPanel>
+            <!-- PAGE 2 -->
+            <apex:outputPanel id="Stage2Panel" layout="block" rendered="{!currentStage == 2}">
+              <apex:outputPanel id="LeadStatusMapping" layout="block" rendered="{!isLeadProfilingEnabled}">
+                <h3 class="title">
+                        Lead Qualification Status Settings
+                      </h3>
+                <apex:pageBlockSection collapsible="false" columns="1">
+                  <apex:pageBlockSectionItem >
+                  </apex:pageBlockSectionItem>
+                  <apex:pageBlockSectionItem >Unqualified <span class="unqualified_tooltip"><img class="helpButton" src="{!$Resource.LeadsProfiler__BlueQuestionMark}" style="height: 14px; margin-left: 2px;"/></span>
+                    <c:FieldSet Ctrl="{!fscStatusLost}" id="fscStatusLost" />
+                  </apex:pageBlockSectionItem>
+                  <apex:pageBlockSectionItem id="qualifiedBlock" rendered="{!!fscStatusIsConverted}">Qualified
+                    <c:FieldSet Ctrl="{!fscStatusClosed}" id="fscStatusClosed" />
+                  </apex:pageBlockSectionItem>
+                  <apex:pageBlockSectionItem >Should Not Rank <span class="unusedStatuses_tooltip"><img class="helpButton" src="{!$Resource.LeadsProfiler__BlueQuestionMark}" style="height: 14px; margin-left: 2px;"/></span>
+                    <c:FieldSet Ctrl="{!fscStatusIgnore}" id="fscStatusIgnore" />
+                  </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+<!--                 <apex:pageBlockSection id="LeadExtendedFields" Title="Lead extended fields" columns="1" rendered="{!isLeadProfilingEnabled}">
+                  <apex:pageBlockSectionItem >
+                    <c:FieldSet Ctrl="{!fscExtendedFields}" id="fscExtendedFields" />
+                  </apex:pageBlockSectionItem>
+                </apex:pageBlockSection> -->
+              </apex:outputPanel>
+            </apex:outputPanel>
+            <!-- PAGE 3 -->
+            <apex:outputPanel layout="block" rendered="{!currentStage == 3}">
+              <h3 class="title">
+                      Confirmation
+                    </h3>
+              <apex:pageBlockSection collapsible="false" columns="1">
+                <p style="width: 80%; margin: 10px">
+                Thank you for installing the SalesPredict application. The system had started reviewing your Salesforce data. The processing could take a while, ranging from hours to a couple of days depending on your data. A confirmation email will be sent to you when your ranking and insights are available. The email will also contain further setup steps needed to expose the data in your Salesforce environment.
+                <br />
+                <br />
+                For any issue or question, please reach out to us at <a href="mailto:support@salespredict.com">support@salespredict.com</a>
+                </p>
+              </apex:pageBlockSection>
+            </apex:outputPanel>
+          </apex:pageBlock>
+        </apex:form>
+      </div>
+      <apex:outputPanel id="buttonsPB" layout="block">
+        <div id="customButtons" class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+          <apex:outputPanel layout="block" styleClass="ui-dialog-buttonset" rendered="{!currentStage == 1}">
+            <input type="button" class="btn sp-button" value="Cancel" onclick="cancel();" />
+            <input type="button" id="btnAllowSalesForce" class="btn sp-button" value="Next" onclick="setDataInstall();" disabled="disabled" />
+          </apex:outputPanel>
+          <apex:outputPanel layout="block" styleClass="ui-dialog-buttonset" rendered="{!currentStage == 2}">
+            <input type="button" class="btn sp-button" value="Cancel" onclick="cancel();" />
+            <input type="button" class="btn sp-button" value="Next" onclick="setDataSaveSettings();" />
+          </apex:outputPanel>
+          <apex:outputPanel layout="block" styleClass="ui-dialog-buttonset" rendered="{!currentStage == 3}">
+            <input type="button" class="btn sp-button" value="Done" onclick="cancel();" />
+            <input type="button" class="btn sp-button" value="Go to Application" onClick="self.location='{!$Page.VF001_Profiler_Lead}'" />
+          </apex:outputPanel>
+        </div>
+      </apex:outputPanel>
+    </apex:outputPanel>
+  </body>
+
+  </html>
+</apex:page>

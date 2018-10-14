@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <icon>SalesPredict_Logo/Salespredict_Icon.png</icon>
+    <label>SalesPredict Account Profile</label>
+    <mobileReady>false</mobileReady>
+    <motif>Custom156: TV Widescreen</motif>
+    <page>VF001_Profiler_Account</page>
+</CustomTab>

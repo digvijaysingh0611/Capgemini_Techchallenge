@@ -1,0 +1,494 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="AccountControllerClass" >
+    <!--Declare Event Handlers--> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    
+    <!--Declare Attributes-->
+    <aura:attribute name="showCaseform" type="boolean" default="false"/>
+    <aura:attribute name="LowerCaseform" type="boolean" default="false"/>
+    <aura:attribute name="AccountList" type="list" />   
+    <aura:attribute name="EditCasesList" type="list" /> 
+    <aura:attribute name="EditCasesListIds" type="list" />
+    <aura:attribute name="updateIdList" type="list" />
+    <aura:attribute name="SelectedCaseStatus" type="String" /> 
+    <aura:attribute name="EditList" type="Case" />
+    <aura:attribute name="editId" type="String" />
+    <aura:attribute name="isSelectAll" type="boolean" default="false"/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="isCaseForm" type="boolean" default="false"/>
+    <aura:attribute name="isUpdateForm" type="boolean" default="false"/>
+    <aura:attribute name="isToastForm" type="boolean" default="false"/>
+    <aura:attribute name="showCase" type="Object"/>
+    <aura:attribute name="toastMsg" type="String" />
+    <aura:attribute name="Case" type="Case" default="{'sobjectType': 'Case',
+                                                     'Subject': '',
+                                                     'Status': '',
+                                                     'Priority': ''
+                                                     }"/>
+    <aura:if isTrue="{!v.isToastForm}">
+        <c:ToastMessage  message="{!v.toastMsg}" />
+    </aura:if>
+    <div class="slds-grid slds-grid--align-end" > 
+        <button class="slds-button slds-button--brand" onclick="{! c.NewModal }" style="top: 45px;
+                                                                                        margin-right: 10px;">New</button>
+        <button class="slds-grid slds-grid--align-center slds-button slds-button--brand" onclick="{! c.UpdateModal }" style="top: 45px;
+                                                                                                                             margin-right: 10px;">Mass Update</button>
+        <button class="slds-button slds-button--brand slds-grid--align-end" onclick="{!c.deleteSelected}" style="top: 45px;
+                                                                                                                 margin-right: 55px;">Delete</button>
+    </div>
+    <div class="slds-m-around_xx-large slds-grid slds-einstein-header slds-card__header" >
+        <h1 class="slds-text-heading--medium " style="transform: rotate(270deg); font-size: 65px;
+    margin-left: 180px;">Cases</h1>
+               
+        <!--Account List Table-->
+        <table class="slds-table slds-table--bordered slds-table--cell-buffer" role="grid">      
+            <thead>  
+                <tr class="slds-text-title--caps">
+                    <th scope="col">
+                        <div class="slds-truncate" title="CaseNumber">Select</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate"></div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate"></div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="CaseNumber">Case Number</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="CaseOrigin">Case Origin</div>
+                    </th>
+                    
+                    <th scope="col">
+                        <div class="slds-truncate" title="Subject">Subject</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Status">Status</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Priority">Priority</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Case Reason">Case Reason</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Case Reason">Contact Email</div>
+                    </th>
+                    
+                    
+                </tr>
+            </thead>
+            <tbody>        
+                <aura:iteration items="{!v.AccountList}" var="acc" >
+                    <tr >
+                        <th>
+                            <label class="slds-checkbox">
+                                <ui:inputCheckbox aura:id="checkAccount" value="" text="{!acc.Id}"/>
+                                <span class="slds-checkbox--faux" />
+                                <span class="slds-form-element__label"></span>
+                            </label>
+                        </th>
+                        <th scope="row">
+                            <div class="slds-truncate" ><button class="slds-button" onclick="{!c.EditModal}" id="{!acc.Id}">Edit</button></div>
+                        </th>
+                        <th>
+                            <div class="slds-truncate" ><button class="slds-button" onclick="{!c.delete}" id="{!acc.Id}"> <lightning:icon variant="error" iconName="utility:delete" class="slds-icon slds-icon_small" size="small" alternativeText="Delete"/></button></div>
+                        </th>
+                        <td>
+                            <div class="slds-truncate" title="{!acc.Name}"  >
+                                <button class="slds-button" onclick="{!c.ShowDetails}" id="{!acc.Id}">
+                                    {!acc.CaseNumber}
+                                </button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title="{!acc.Origin}" >{!acc.Origin}</div>
+                        </td>
+                        
+                        <td>
+                            <div class="slds-truncate" title="{!acc.Subject}" >{!acc.Subject}</div>
+                        </td>
+                        
+                        <td>
+                            <div class="slds-truncate" title="{!acc.Status}" >{!acc.Status}</div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title="{!acc.Priority}">{!acc.Priority}</div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title="{!acc.Priority}">{!acc.Reason}</div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title="{!acc.ContactEmail}">{!acc.ContactEmail}</div>
+                        </td>
+                        
+                        
+                        
+                        
+                    </tr>
+                </aura:iteration>
+            </tbody>
+            
+        </table>
+        
+        
+        
+    </div>
+    
+    <aura:if isTrue="{!v.isOpen}">
+        
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Edit the Case</h2>
+                </header>
+                <!--###### MODAL BOX BODY Part Start######-->
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <fieldset class="slds-form-element slds-form_compound " >
+                        <legend class="slds-form-element__legend slds-form-element__label slds-align_absolute-center" style="font-size: 20px;">Please fill the details</legend>
+                        
+                        <div class="slds-form-element__control " style="padding-left: 5px;" items="{!v.EditList}" >
+                            <div class="slds-form-element  ">
+                                <label class="slds-form-element__label" for="input-01" >Subject</label>
+                                <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                    <ui:inputText class="slds-input" aura:id="subject" value="{!v.EditList.Subject}"  />
+                                </div>
+                            </div>
+                            <div class="slds-form-element slds-size_1-of-1">
+                                <label class="slds-form-element__label" for="input-02">Status</label>
+                                <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                    <ui:inputText class="slds-input" aura:id="status" value="{!v.EditList.Status}"  />
+                                </div>
+                            </div>
+                            <div class="slds-form-element slds-size_1-of-1">
+                                <label class="slds-form-element__label" for="input-03">Priority</label>
+                                <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                    <ui:inputText class="slds-input" aura:id="priority" value="{!v.EditList.Priority}"  />
+                                </div>
+                            </div>
+                            <div class="slds-form-element slds-size_1-of-1">
+                                <label class="slds-form-element__label" for="input-03">Reason</label>
+                                <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                    <ui:inputText class="slds-input" aura:id="Reason" value="{!v.EditList.Reason}"  />
+                                </div>
+                            </div>
+                            
+                        </div> 
+                        
+                    </fieldset>
+                    
+                    
+                </div>
+                <!--###### MODAL BOX FOOTER Part Start ######-->
+                <footer class="slds-modal__footer">
+                    
+                    <lightning:button variant="Brand" 
+                                      label="Save"
+                                      title="Save"
+                                      onclick="{! c.Save }"/>
+                    <lightning:button variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.closeModel }"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <!--###### MODAL BOX Part END Here ######-->
+        
+    </aura:if>
+    <aura:if isTrue="{!v.isCaseForm}">
+        
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Case</h2>
+                </header>
+                <!--###### MODAL BOX BODY Part Start######-->
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <fieldset class="slds-form-element slds-form_compound " >
+                        <legend class="slds-form-element__legend slds-form-element__label slds-align_absolute-center" style="font-size: 20px;">Please fill the details</legend>
+                        <div class="slds-form-element__control " style="padding-left: 5px;">
+                            <div class="slds-form-element  ">
+                                <label class="slds-form-element__label" for="input-01">Subject</label>
+                                <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                    <ui:inputText class="slds-input" value="{!v.Case.Subject}" placeholder="Enter Subject" />
+                                </div>
+                            </div>
+                            <div class="slds-form-element slds-size_1-of-1">
+                                <label class="slds-form-element__label" for="input-02">Status</label>
+                                <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                    <ui:inputText class="slds-input" value="{!v.Case.Status}" placeholder="Enter Status" />
+                                </div>
+                            </div>
+                            <div class="slds-form-element slds-size_1-of-1">
+                                <label class="slds-form-element__label" for="input-03">Priority</label>
+                                <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                    <ui:inputText class="slds-input" value="{!v.Case.Priority}" placeholder="Enter Priority" />
+                                </div>
+                            </div>
+                        </div> 
+                    </fieldset>
+                </div>
+                
+                
+                
+                <footer class="slds-modal__footer">
+                    
+                    <lightning:button variant="Brand" 
+                                      label="Create"
+                                      title="Create"
+                                      onclick="{! c.Create }"/>
+                    <lightning:button variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.closeModel }"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <!--###### MODAL BOX Part END Here ######-->
+        
+    </aura:if>
+    
+    <aura:if isTrue="{!v.isUpdateForm}">
+        
+        <!--###### MODAL BOX Start######--> 
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- ###### MODAL BOX HEADER Start ######-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Mass Update</h2>
+                </header>
+                <!--###### MODAL BOX BODY Part Start######-->
+                
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <fieldset class="slds-form-element slds-form_compound " >
+                        
+                        
+                        
+                        <div class="slds-form-element__control " style="padding-left: 5px;">
+                            <div class="slds-form-element">
+                                
+                                <div class="slds-select_container">
+                                    
+                                    <lightning:select name="selectItem" label="Select Case Status" onchange="{!c.onPicklistChange}">
+                                        <option value="New">New</option>
+                                        <option value="Close">Close</option>
+                                        <option value="Open">Open</option>
+                                    </lightning:select>
+                                </div>
+                            </div>
+                            
+                            <table class="slds-table slds-table--bordered slds-table--cell-buffer" role="grid">      
+                                <thead>  
+                                    <tr class="slds-text-title--caps">
+                                        
+                                        
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Name">CaseNumber</div>
+                                        </th>
+                                        
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Subject">Subject</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Status">Status</div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Priority">Priority</div>
+                                        </th>
+                                        
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>        
+                                    <aura:iteration items="{!v.EditCasesList}" var="acc" >
+                                        <tr >
+                                            
+                                            <td>
+                                                <div class="slds-truncate" title="{!acc.Name}"  >
+                                                    
+                                                    {!acc.CaseNumber}
+                                                    
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate" title="{!acc.Subject}" >{!acc.Subject}</div>
+                                            </td>
+                                            
+                                            <td>
+                                                <div class="slds-truncate" title="{!acc.Status}" >{!acc.Status}</div>
+                                            </td>
+                                            <td>
+                                                <div class="slds-truncate" title="{!acc.Priority}">{!acc.Priority}</div>
+                                            </td>
+                                            
+                                            
+                                            
+                                            
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                            
+                        </div> 
+                    </fieldset>
+                </div>
+                
+                
+                
+                <footer class="slds-modal__footer">
+                    
+                    <lightning:button variant="Brand" 
+                                      label="Update"
+                                      title="Update"
+                                      onclick="{! c.onStatusUpdate }"/>
+                    <lightning:button variant="neutral" 
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{! c.closeModel }"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        <!--###### MODAL BOX Part END Here ######-->
+        
+    </aura:if>
+    
+    <aura:if isTrue="{!v.LowerCaseform}">
+        
+        <article class="slds-card" style="margin-left:45px;margin-right:45px">
+            <div class="slds-grid slds-einstein-header slds-card__header">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-grid slds-grid_vertical-align-center slds-size_3-of-4 slds-medium-size_2-of-3">
+                        <div class="slds-media__body">
+                            <h2 class="slds-truncate" title="Following details are:">
+                                <a href="javascript:void(0);" class="slds-card__header-link" title="Einstein (10+)">
+                                    <span class="slds-text-heading_small"><h1>Details</h1></span>
+                                </a>
+                            </h2>
+                        </div>
+                    </div>
+                    <div class="slds-einstein-header__figure slds-size_1-of-4 slds-medium-size_1-of-3"></div>
+                </header>
+            </div>
+            <div class="slds-card__body slds-card__body_inner">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        
+                        <label class="slds-form-element__label" for="input-01">CaseNumber</label>
+                        <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                            <ui:inputText  class="slds-input" value="{!v.showCase.CaseNumber}" disabled="true"  />
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="slds-col">
+                        
+                        <label class="slds-form-element__label" for="input-01">Case Origin</label>
+                        <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                            <ui:inputText  class="slds-input" value="{!v.showCase.Origin}" disabled="true"  />
+                        </div>
+                        
+                    </div>
+                    <div class="slds-col">
+                        
+                        <label class="slds-form-element__label" for="input-02">Subject</label>
+                        <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                            <ui:inputText class="slds-input" value="{!v.showCase.Subject}" disabled="true" />
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        
+                        <label class="slds-form-element__label" for="input-03">Case Reason</label>
+                        <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                            <ui:inputText class="slds-input" value="{!v.showCase.Reason}" disabled="true" />
+                            
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        
+                        <label class="slds-form-element__label" for="input-03">Status</label>
+                        <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                            <ui:inputText class="slds-input" value="{!v.showCase.Status}" disabled="true"  />
+                            
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        
+                        <label class="slds-form-element__label" for="input-03">ContactEmail</label>
+                        <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                            <ui:inputText class="slds-input" value="{!v.showCase.ContactEmail}" disabled="true"  />
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        
+                        <label class="slds-form-element__label" for="input-03">Date/Time Closed</label>
+                        <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                            <ui:inputText class="slds-input" value="{!v.showCase.ClosedDate}" disabled="true" />
+                            
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        
+                        <label class="slds-form-element__label" for="input-03">Date/Time Opened</label>
+                        <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                            <ui:inputText class="slds-input" value="{!v.showCase.CreatedDate}" disabled="true"  />
+                            
+                        </div>
+                    </div>
+                    
+                    
+                </div>
+                <div class="slds-col">
+                    
+                    <label class="slds-form-element__label" for="input-03">Description</label>
+                    <div class="slds-form-element__control">
+                        <textarea rows="4" cols="120" disabled="true" >{!v.showCase.Description}</textarea>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            <footer class="slds-card__footer">
+                <lightning:button variant="neutral" 
+                                  label="Close"
+                                  title="Close"
+                                  onclick="{! c.closeModel }"/>
+            </footer>
+        </article>
+        
+        
+    </aura:if>
+    
+    
+</aura:component>

@@ -1,0 +1,148 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="HandlerChatBot" access="global">
+    <ltng:require styles="{! $Resource.	css224 }"
+                  scripts="{!$Resource.jquery224  }" 
+                  
+                  afterScriptsLoaded="{!c.scriptsLoaded}"/>
+    
+    
+    
+    <aura:attribute name="currentDate" type="Date"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="height" type="String" default="500px"/>
+    <aura:attribute name="chatInboundList" type="List" />
+    <aura:attribute name="chatOutboundList" type="List" />
+    <aura:attribute name="userChat" type="String"/>
+    <aura:attribute name="showChat" type="boolean" default="true"/>
+    <aura:attribute name="showButton" type="boolean" default="false"/>
+    <aura:attribute name="showLeadform" type="boolean" default="false"/>
+    <aura:attribute name="showLoading" type="boolean" default="false"/>
+    <aura:attribute name="ifmsrc" type="String"/>
+    <aura:attribute name="showLiveAgent" type="boolean" default="false"/>
+    <aura:attribute name="lead" type="lead" default="{'sobjectType': 'lead',
+                                                     'FirstName': '',
+                                                     'LastName': '',
+                                                     'Email': '',
+                                                     'Company': ''                          
+                                                     
+                                                     }"/>
+    <aura:attribute name="backgroundImageURL" type="String" default=""/>
+    
+    
+    <div class="live-chat" >
+        
+        <header class="clearfix">
+            
+            <h4 style="font-size:13px">Virtual Assistant</h4>
+            
+        </header>
+        <div class="chat" style=" display:none">
+            
+            <aura:if isTrue="{!v.showLeadform}">
+                <fieldset class="slds-form-element slds-form_compound " >
+                    <legend class="slds-form-element__legend slds-form-element__label slds-align_absolute-center" style="font-size: 20px;">Please fill the details</legend>
+                    <div class="slds-form-element__control " style="padding-left: 5px;">
+                        <div class="slds-form-element  ">
+                            <label class="slds-form-element__label" for="input-01">First Name</label>
+                            <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                <ui:inputText class="slds-input" value="{!v.lead.FirstName}" placeholder="Enter First Name" />
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-size_1-of-1">
+                            <label class="slds-form-element__label" for="input-02">Last Name</label>
+                            <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                <ui:inputText class="slds-input" value="{!v.lead.LastName}" placeholder="Enter Last Name" />
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-size_1-of-1">
+                            <label class="slds-form-element__label" for="input-03">Email</label>
+                            <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                <ui:inputText class="slds-input" value="{!v.lead.Email}" placeholder="Enter Email" />
+                            </div>
+                        </div>
+                        <div class="slds-form-element slds-size_1-of-1">
+                            <label class="slds-form-element__label" for="input-04">Company</label>
+                            <div class="slds-form-element__control" style="border-radius: 5px 20px 5px">
+                                <ui:inputText class="slds-input" value="{!v.lead.Company}" placeholder="Enter Company" />
+                            </div>
+                        </div>
+                    </div> 
+                </fieldset>
+                <div class="col-md-4 text-center" style= "margin-top: 15px">
+                    <ui:button class="btn btn-default slds-align_absolute-center" press="{!c.create}">Submit</ui:button>
+                </div>
+            </aura:if> 
+            
+            <aura:if isTrue="{!v.showChat}">
+                
+                <div aura:id="content" class="chat-history" style="height: 272px;overflow-y:scroll;background-color:#EFF0F9; " >
+                    
+                    <aura:iteration items="{!v.chatInboundList}" var="message">
+                        
+                        <lightning:layout >
+                          <!-- <lightning:layoutitem padding="around-small">
+                            <lightning:icon iconName="{#message.author == 'Me' ? 'standard:avatar_loading' : 'standard:custom_notification'}" size="small"/>
+                        </lightning:layoutitem>-->
+                            <lightning:layoutitem padding="around-small" flexibility="grow">
+                                <!-- <p><strong>{#message.author}</strong></p>
+                            <p style="float:right"><strong>{#message.author1}</strong></p>-->
+                                
+                                <div style="font-size:12px;color:black;display:inline-block;width:30%;border-radius: 5px 20px 5px;background-color: white;padding-left: 10px;padding-right: 10px;">
+                                    <p> {#message.User}</p>
+                                    <!--<lightning:formattedDateTime aura:id="dt"
+                                     value="{!v.currentDate}"
+                                     hour="2-digit"
+                                     minute="2-digit" 
+                                     hour12="true"
+                                     timeZone="{!$Locale.timezone}"/>-->
+                                </div>
+                                <div style=" font-size:12px;float: right; border-radius:5px 20px 5px;
+                                            background-color: #4EE79B;  width:50% ;padding-left: 10px;padding-right: 10px;">
+                                    <p >{#message.Assistant}</p>  
+                                    <!--<lightning:formattedDateTime aura:id="dt" style=" float: right;"
+                                     value="{!v.currentDate}"
+                                     hour="2-digit"
+                                     minute="2-digit" 
+                                     hour12="true"
+                                     timeZone="{!$Locale.timezone}"/>-->
+                                    
+                                </div>
+                                
+                            </lightning:layoutitem>
+                        </lightning:layout>
+                    </aura:iteration>
+                </div> 
+                
+                
+                <div class="footer slds-form-element slds-p-horizontal--x-small" style=" padding-right: 0px;
+    padding-left: 0px;">
+                    <div class="slds-form-element__control ">
+                        
+                        <ui:inputText class="slds-input" value="{!v.userChat}"
+                                      keyup="{!c.postUserChat}" placeholder="Type here your message...." />
+                    </div>
+                </div>  
+            </aura:if>
+            <aura:if isTrue="{!v.showLiveAgent}">
+                <iframe style="height: 272px;overflow: auto; " src="{!v.ifmsrc}" />
+                
+            </aura:if>
+            <aura:if isTrue="{!v.showButton}">
+                <div style="  width: 200px;height: 272px;border:solid 1px #000">
+                   <iframe  style="{!'position: relative; height: 272px; background:' + v.backgroundColor + ' url(' + v.backgroundImageURL +') no-repeat;background-position: center;background-size: cover;'}" />
+                   <button  onclick="{!c.handleClick}" class="slds-button slds-button_brand" style="position:relative; float: right; right:10px; bottom:35px; transition: 0.5s;" >Live Agent</button>
+                </div>
+            </aura:if> 
+            <aura:if isTrue="{!v.showLoading}">
+                
+                <!-- Will Add -->
+            </aura:if>
+            
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    
+</aura:component>

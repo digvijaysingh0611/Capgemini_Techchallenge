@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>ChatBot</members>
+        <members>ProblemStatement1</members>
+        <members>ProblemStatementApp</members>
+        <members>harnessApp</members>
+        <members>ToastMessage</members>
+        <name>AuraDefinitionBundle</name>
+    </types>
+    <types>
+        <members>HandlerChatBot</members>
+        <members>HandlerChatBot_Test</members>
+        <members>AccountControllerClass</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>OfflineChat</members>
+        <members>Onlinechat</members>
+        <members>liveagent</members>
+        <members>jquery224</members>
+        <members>css224</members>
+        <name>StaticResource</name>
+    </types>
+    <types>
+        <members>SetDescOnCase</members>
+        <name>ApexTrigger</name>
+    </types>
+    <version>38.0</version>
+</Package>

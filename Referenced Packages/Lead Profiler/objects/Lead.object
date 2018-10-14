@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Business_Group__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Business Group legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Business_Group_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Business_Group__c,DataObject__r.Business_Group__c)</formula>
+        <label>Business Group</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Buyer_Persona__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Buyer Persona legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Buyer_Persona_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Buyer_Persona__c,DataObject__r.Buyer_Persona__c)</formula>
+        <label>Buyer Persona</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>ChangeRankReason__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>ChangeRankReason</label>
+        <length>32768</length>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>LongTextArea</type>
+        <visibleLines>2</visibleLines>
+    </fields>
+    <fields>
+        <fullName>City__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>City legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>City_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),City__c,DataObject__r.City__c)</formula>
+        <label>SalesPredict City</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Company_Profile__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Company Profile legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Company_Profile_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Company_Profile__c,DataObject__r.Company_Profile__c)</formula>
+        <label>Company Profile</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Company_Revenue__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Company yearly revenue</description>
+        <externalId>false</externalId>
+        <label>Company yearly revenue legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Company_Revenue_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Company yearly revenue</description>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Company_Revenue__c,DataObject__r.Company_Revenue__c)</formula>
+        <label>Company yearly revenue</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Company_Size__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Number of employees</description>
+        <externalId>false</externalId>
+        <label>Number of employees legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Company_Size_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Number of employees</description>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Company_Size__c,DataObject__r.Company_Size__c)</formula>
+        <label>Number of employees</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Country__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Country legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Country_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Country__c,DataObject__r.Country__c)</formula>
+        <label>SalesPredict Country</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>DataObject__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>DataObject</label>
+        <referenceTo>SalesPredict_Data__c</referenceTo>
+        <relationshipName>Leads</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>OriginalRank__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>OriginalRank legacy</label>
+        <length>1</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>OriginalRank_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),OriginalRank__c,DataObject__r.OriginalRank__c)</formula>
+        <label>OriginalRank</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Probability_Delta__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Probability Delta legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Probability_Delta_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Probability_Delta__c,DataObject__r.Probability_Delta__c)</formula>
+        <label>Probability Delta</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SalesPredict_Last_Update__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>SalesPredict Last Update legacy</label>
+        <precision>10</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SalesPredict_Last_Update_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),SalesPredict_Last_Update__c,DataObject__r.SalesPredict_Last_Update__c)</formula>
+        <label>SalesPredict Last Update</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SalesPredict_Rank__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>(IF(ISBLANK(SalesPredict_report_rank_ref__c), NULL, 
+            HYPERLINK(&quot;/apex/LeadsProfiler__vf002_LeadProfiler?Rank=&quot; &amp; CASE(SalesPredict_report_rank_ref__c,&quot;A&quot;,&quot;5&quot;,&quot;B&quot;,&quot;4&quot;,&quot;C&quot;,&quot;3&quot;,&quot;D&quot;,&quot;2&quot;,&quot;2&quot;) + Score_ref__c &amp; &quot;&amp;objid=&quot; &amp; Id &amp; &quot;&amp;object=Lead&quot;,IMAGE(BLANKVALUE($Setup.Salepredict_Settings__c.ImagePrefix__c, &quot;/resource/ranks_labels/Labels/label&quot;)  + &quot;_&quot; + SalesPredict_report_rank_ref__c + &quot;.png&quot;, &quot;{\&quot;User\&quot;:\&quot;&quot; + FirstName + &quot; &quot; + LastName + &quot;\&quot;,\&quot;ProbRange\&quot;:\&quot;&quot; &amp; SalesPredict_report_rank_ref__c &amp; &quot;\&quot;,\&quot;Buyer\&quot;:\&quot;&quot; + Buyer_Persona_ref__c + &quot;\&quot;,\&quot;Profile\&quot;:\&quot;&quot; + Company_Profile_ref__c + &quot;\&quot;,\&quot;Vertical\&quot;:\&quot;&quot; + Vertical_ref__c + &quot;\&quot;,\&quot;Fit\&quot;:\&quot;&quot; + Solution_Fit_ref__c + &quot;\&quot;,\&quot;ProbDelta\&quot;:\&quot;&quot; + Probability_Delta_ref__c + &quot;\&quot;,\&quot;Id\&quot;:\&quot;&quot; + Id + &quot;\&quot;}&quot;, 18, 56))))</formula>
+        <label>SalesPredict rank</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SalesPredict_report_rank__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>SalesPredict report rank legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>SalesPredict_report_rank_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),SalesPredict_report_rank__c,DataObject__r.SalesPredict_report_rank__c)</formula>
+        <label>SalesPredict report rank</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Score__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Score legacy</label>
+        <length>4</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Score_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Score__c,DataObject__r.Score__c)</formula>
+        <label>Score</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Solution_Fit__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Solution Fit legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Solution_Fit_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Solution_Fit__c,DataObject__r.Solution_Fit__c)</formula>
+        <label>Solution Fit</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>State__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>State legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>State_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),State__c,DataObject__r.State__c)</formula>
+        <label>SalesPredict State</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Street__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Street legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Street_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Street__c,DataObject__r.Street__c)</formula>
+        <label>SalesPredict Street</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Title__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Title of lead</description>
+        <externalId>false</externalId>
+        <label>Title of lead legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Title_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <description>Title of lead</description>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Title__c,DataObject__r.Title__c)</formula>
+        <label>Title of lead</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Vertical__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>Vertical legacy</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Vertical_ref__c</fullName>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <formula>IF(ISBLANK(DataObject__r.SalesPredict_report_rank__c),Vertical__c,DataObject__r.Vertical__c)</formula>
+        <label>Vertical</label>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+</CustomObject>

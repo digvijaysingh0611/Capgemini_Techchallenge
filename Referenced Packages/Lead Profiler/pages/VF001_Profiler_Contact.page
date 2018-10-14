@@ -1,0 +1,83 @@
+<apex:page controller="LeadsProfiler.CTRL001_Profiler_Contact" action="{!init}" tabStyle="Leads_Profiler__tab"> 
+         
+    <!-- Here we included the necessary jquery javascript and css files -->
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery-1.7.1.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery-ui-1.8.18.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery.tablesorter.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery.tablesorter.pager.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__Downloadify,'js/swfobject.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__Downloadify,'js/downloadify.min.js')}"/>
+
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/jshashtable-2.1_src.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/jquery.numberformatter-1.2.3.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/tmpl.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/jquery.dependClass-0.1.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/draggable-0.1.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/jquery.slider.js')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'css/ui-lightness/jquery-ui-1.7.2.custom.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'css/tablesorter/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'css/tablesorter/jquery.tablesorter.pager.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__jslider, 'css/jslider.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__jslider, 'css/jslider.plastic.css')}" />
+
+    <apex:includeScript value="{!$Resource.LeadsProfiler__ChosenJquery}"/>
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'qtip2/jquery.qtip.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'qtip2/jquery.qtip.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'qtip2/modal.css')}" />
+    <apex:stylesheet value="{!$Resource.LeadsProfiler__ChosenStyle}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__ProfilerPageJS)}" />
+    
+    <br/>
+    
+    <apex:outputPanel id="mainPanel" layout="block">
+        <apex:enhancedList rendered="{!!needSetupWizard}" type="{!objectType}" height="800" rowsPerPage="25" id="ObjectList" customizable="True" oncomplete="waitForListReady(displayQtip, fixCreateEditLink);" />
+    </apex:outputPanel>    
+
+<!--     <div id="downloadify" style="float: right;" title="Export table to excel" rendered="{!!needSetupWizard}">
+        You must have Flash 10 installed to export to excel.
+    </div>
+ -->   
+    <div id="tooltipTemplate" style="display: none !important; visibility: hidden !important;">
+        <div class="user_item">
+            <div class="close"> </div>
+            <h1><span class="ico"> </span> <span class="user">{{User}}</span><div class="clearer"> </div></h1>
+            <div class="prob lead_rank {{Probability Range}} {{Arrow Class}}">{{Probability Delta}} Conversion Probability </div>
+            <ul>
+                <li><label>Buyer Persona: </label> <span class="val">{{Buyer Persona}} </span> </li>
+                <li><label>Company Profile:</label> <span class="val">{{Company Profile}} </span> </li>
+                <li><label>Vertical: </label> <span class="val">{{Vertical}} </span> </li>
+                <li class="{{Solution Fit Visibility}}"><label>Solution Fit: </label> <span class="val">{{Solution Fit}} </span> </li>
+            </ul>
+            <div class="more"><a target="_blank" href="/apex/vf002_LeadProfiler?objid={{Lead Id}}&object={!objectType}">More </a> </div>
+        </div>
+    </div> <!-- #tooltipTemplate -->
+    
+    <div id="settingsDialog" style="display:none"> 
+        <h3>
+            The installation process was not yet completed. <br/>Please complete Lead Profiler Installation, by following the remaining setup steps, using: <br/><a href="{!$Page.VF000_SettingsWizard}">Lead Profiler Settings</a>
+        </h3>
+    </div>
+    <div id="settingsDialog2" style="display:none"> 
+        <h3>
+            The installation process was not yet completed. <br/>Please ask your administrator to complete Lead Profiler installation, by following the remaining setup steps, <br/>using 'Lead Profiler Settings'.
+        </h3>
+    </div>
+     
+    <script>
+         
+        if({!AND(needSetupWizard, isSysAdmin)} ){
+            $('#downloadify').hide()
+            initDialog("settingsDialog");
+        } 
+        if({!AND(needSetupWizard, !isSysAdmin)} ){
+            $('#downloadify').hide()
+            initDialog("settingsDialog2");  
+        }
+    
+    </script>
+
+
+
+
+</apex:page>

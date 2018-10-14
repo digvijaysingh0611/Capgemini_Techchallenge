@@ -1,0 +1,7 @@
+<apex:page controller="LeadsProfiler.CTRL001_Profiler_Lead"  action="{!init}"  showHeader="true" sidebar="false" >
+    
+    <apex:canvasApp rendered="{!!isInsightsInDemoMode}" maxHeight="infinite" maxWidth="infinite" applicationName="{!ApplicationName}"/>
+    <apex:form rendered="{!isInsightsInDemoMode}">
+        Please wait ... 
+    </apex:form>
+</apex:page>

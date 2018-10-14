@@ -1,0 +1,165 @@
+<apex:page controller="LeadsProfiler.CTRL002_LeadProfiler" showHeader="true" sidebar="false" 
+ tabStyle="Leads_Profiler__tab" standardStylesheets="false" action="{!loadData}" docType="html-5.0" cache="true" expires="604800">
+
+  <apex:stylesheet value="{!$Resource.LeadsProfiler__LP_TableSorterStyle}" />
+  <apex:stylesheet value="{!$Resource.LeadsProfiler__FancyStyle}" />
+
+  <link href="{!URLFOR($Resource.BootstrapPrivateStyle)}" rel="stylesheet" />
+  <link href="{!URLFOR($Resource.LeadsProfilerStyle)}" rel="stylesheet" />
+
+  <div id="ApexApplication">
+    <apex:outputPanel layout="block" rendered="{!If(contactDataContainer.FullName=='NoDataError ', true, false)}">
+      <div class="container">
+        <div class="errorContainer">
+          <div class="errorTitle">Error, no data found!</div>
+          <div class="errorImage">X</div>
+          <div class="errorDescription">
+            Currently there is no data for that lead,<br />
+            probably because the lead has expired!
+          </div>
+        </div>
+      </div>
+    </apex:outputPanel>
+
+
+    <apex:outputPanel layout="block" rendered="{!If(contactDataContainer.FullName=='NoDataError ', false, true)}">
+
+      <div class="container">
+          <div class="row">
+              <div class="col-md-2">
+                  <c:LeadsInformation PersonName="{!contactDataContainer.FullName}" 
+                                      PersonTitle="{!contactDataContainer.Position}" 
+                                      BuyerPersona="{!contactDataContainer.BuyerPersona}" 
+                                      CompanyName="{!companyDataContainer.Name}" 
+                                      CompanyOwnership="{!companyDataContainer.Type}" 
+                                      CompanySize="{!companyDataContainer.Size}" 
+                                      Industry="{!companyDataContainer.Industry}" 
+                                      Revenue="{!companyDataContainer.Revenue}" 
+                                      SolutionFit="{!companyDataContainer.SolutionFit}" 
+                                      LogoURL="{!companyDataContainer.LogoURL}"
+                                      ObjectType="{!objectType}"
+                                      HasSocialInsights="{!HasSocialInsights}"
+                                      SocialInsightsContainer="{!socialInsightsContainer}"
+                                      >
+                      
+                  </c:LeadsInformation>
+              </div>
+              <div class="col-md-3">
+                  <c:LeadParameters KeyFactors="{!KeyFactorsInformationRows}"
+                                    MoreInformation="{!MoreInformationRows}"
+                                    WebsiteVisits="{!contactDataContainer.NumberOfWebsiteVisits}"
+                                    TimeResponseToMails="{!contactDataContainer.AvgEmailResTime}"
+                                    LastActivity="{!contactDataContainer.LatestActivity}"
+                                    OppsWonRatio="{!companyDataContainer.OppsWonRatio}"
+                                    OppsCount="{!companyDataContainer.OppsCount}"
+                                    SimilarOppsCount="{!companyDataContainer.SimilarOppsCount}"
+                                    SimilarOppsWonRatio="{!companyDataContainer.SimilarOppsWonRatio}"
+                                    OppsWonRenewalRatio="{!companyDataContainer.OppsWonRenewalRatio}"
+                                    OppsRenewalCount="{!companyDataContainer.OppsRenewalCount}"
+                                    OppsWonUpsellRatio="{!companyDataContainer.OppsWonUpsellRatio}"
+                                    OppsUpsellCount="{!companyDataContainer.OppsUpsellCount}"
+                                    SimilarOppsRenewalCount="{!companyDataContainer.SimilarOppsRenewalCount}"  
+                                    SimilarOppsWonRenewalRatio="{!companyDataContainer.SimilarOppsWonRenewalRatio}"
+                                    SimilarOppsUpsellCount="{!companyDataContainer.SimilarOppsUpsellCount}"  
+                                    SimilarOppsWonUpsellRatio="{!companyDataContainer.SimilarOppsWonUpsellRatio}"
+                                    OppsWonList="{!companyDataContainer.OppsWonList}"
+                                    OppsWonRenewalList="{!companyDataContainer.OppsWonRenewalList}"
+                                    OppsWonUpsellList="{!companyDataContainer.OppsWonUpsellList}"
+                                    SimilarAccountWonList="{!companyDataContainer.SimilarAccountWonList}"
+                                    EngagementFieldList="{!engagementDataContainer.KeyValueList}"
+                                    CompanyName="{!companyDataContainer.Name}"
+                                    LeadScore="{!companyDataContainer.LeadScore}"
+                                    OriginalSourceInfo="{!companyDataContainer.OriginalSourceInfo}"
+                                    OriginalSourceType="{!companyDataContainer.OriginalSourceType}"
+                                    OriginalSearchEngine="{!companyDataContainer.OriginalSearchEngine}"
+                                    OriginalSearchPhrase="{!companyDataContainer.OriginalSearchPhrase}"
+                                    OriginalReferrer="{!companyDataContainer.OriginalReferrer}"
+                                    OriginalMarketingSource="{!companyDataContainer.OriginalMarketingSource}"
+                                    HasEngagements="{!isHasEngagements}"
+                                    HasSuccess="{!isHasSuccess}"
+                                    HasSimilarSuccess="{!isHasSimilarSuccess}"
+                                    HasParameterWithType="{!HasParameterWithType}"
+                                    HasIncentivesDetails="{!HasIncentivesDetails}"
+                                    HasMissingData="{!HasMissingData}"
+                                    HasWebSiteActivity="{!HasWebSiteActivity}"
+                                    HasBehaviorDetails="{!HasBehaviorDetails}"
+                                    HasActionObject="{!HasActionObject}"
+                                    showMissingFiltering="{!showMissingFiltering}"
+                                    IncentiveDataContainer="{!incentiveDataContainer}"
+                                    MissingDataContainer="{!missingDataContainer}"
+                                    WebSiteActivityContainer="{!websiteActivityContainer}"
+                                    behaviorDetailsContainer="{!behaviorDetailsContainer}"
+                                    ActionObjectContainer="{!actionObjectContainer}"
+                                    activityProduct="{!activityProduct}"
+                                    IsDefaultTheme="{!IsDefaultTheme}"
+                                    HasTechnologiesDetails="{!HasTechnologies}"
+                                    TechnologiesContainer="{!TechnologiesContainer}"
+                                    businessGroup="{!currentBusinessGroup}"
+                                    showJson="{!showJson}"
+                                    HasSocialInsights="{!HasSocialInsights}"
+                                                                          SocialInsightsContainer="{!socialInsightsContainer}"
+                                    json="{!json1}"></c:LeadParameters>
+                  
+                    <div id="RankOverwrite" class="{!IF(IsDefaultTheme, 'Default', 'Special')}">
+                        <apex:form >
+                          <apex:selectList id="chooseRank" value="{!currentRank}" size="1" onchange="showConfirmationModal()">
+                            <apex:actionFunction name="updateRank" action="{!saveRank}" reRender="#RankOverwrite">
+                              <apex:param name="userChangeRankReason" value="" assignTo="{!changeRankReason}" ></apex:param>
+                            </apex:actionFunction>
+                              <apex:selectOption rendered="{!AmountOfRanks > 0}" onclick="consoleString('click:A');" itemValue="A" itemLabel="A"></apex:selectOption>
+                            <apex:selectOption rendered="{!AmountOfRanks > 1}" onclick="consoleString('click:B');"  itemValue="B" itemLabel="B"></apex:selectOption>
+                            <apex:selectOption rendered="{!AmountOfRanks > 2}" onclick="consoleString('click:C');" itemValue="C" itemLabel="C"></apex:selectOption>
+                            <apex:selectOption rendered="{!AmountOfRanks > 3}" onclick="consoleString('click:D');" itemValue="D" itemLabel="D"></apex:selectOption>
+                          </apex:selectList>
+                        </apex:form>
+                    </div>
+                    <div id="changeRankReasonModal"  class="modal fade" tabindex="-1" role="dialog" 
+                         aria-labelledby="myModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                              <h4 class="modal-title" id="myModalLabel">Score Changing</h4>
+                          </div>
+                          <div class="modal-body">
+                            <p>You have changed the Lead's score.<br />
+                                Please Confirm.</p>
+                            <textarea id="changeRankReasonString" class="changeReasonArea" placeholder="Enter reason for changing score (optional)."></textarea>
+                          </div>
+                          <div class="centeredButton">
+                            <button type="button" class="sp-button sp-close_button" data-dismiss="modal" onclick="undoRankChange()">Cancel</button>
+                            <button id="rankConfirmed" type="button" class="sp-button sp-close_button" data-dismiss="modal" onclick="confirm()" >Confirm</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+              </div>
+          </div>
+      </div>
+    </apex:outputPanel>
+
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.sp_jquery, 'js/jquery.tinyscrollbar.js')}"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.LP_TableSorter)}" type="text/javascript" />
+    <script src="{!URLFOR($Resource.FancyJS)}" type="text/javascript" />
+    
+    <!-- Our Scripts -->
+    <script src="{!URLFOR($Resource.LeadsProfilerJS)}" />
+
+    <script>        
+    function changeToImage() {
+        var isDefaultTheme = {!IsDefaultTheme}
+        
+        if (isDefaultTheme) return;
+        
+        $('.sp-class-D').html('<apex:image id="D" value="{!ImageLocation}_D.png" />');
+        $('.sp-class-C').html('<apex:image id="C" value="{!ImageLocation}_C.png" />');
+        $('.sp-class-B').html('<apex:image id="B" value="{!ImageLocation}_B.png" />');
+        $('.sp-class-A').html('<apex:image id="A" value="{!ImageLocation}_A.png" />');
+    }
+    </script>
+  </div>
+</apex:page>

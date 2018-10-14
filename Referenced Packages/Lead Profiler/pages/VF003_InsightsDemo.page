@@ -1,0 +1,26 @@
+<apex:page controller="LeadsProfiler.CTRL_Insights_Demo" action="{!init}" showHeader="true" sidebar="false">
+
+    <apex:form >
+        <apex:actionFunction name="changeToLeadsProfiler" action="{!changeToLeadsProfiler}" />
+
+        <apex:actionFunction name="changeToRoundaboutPage" action="{!changeToRoundaboutPage}" />
+        <apex:actionFunction name="changeToConversionPage" action="{!changeToConversionPage}" />
+        <apex:actionFunction name="changeToInsightsPage"   action="{!changeToInsightsPage}" />
+
+    </apex:form> 
+
+    <apex:tabPanel switchType="client" selectedTab="tabInsightsView" id="theTabPanel" onclick="changeToLeadsProfilerSelector(event)">    
+
+        <apex:tab label="Leads Profile" name="tabLeadsProfile" id="tabLeadsProfile">
+            Please wait ...
+        </apex:tab>
+        <apex:tab label="Success Insights" name="tabInsightsView" id="tabInsightsView">
+            <c:DemoDashboard_Roundabout rendered="{!dashboardDemo_pageRoundabout}"
+                insightsDemoData="{!insightsDemoData}"></c:DemoDashboard_Roundabout>
+            <c:DemoDashboard_Conversion rendered="{!dashboardDemo_pageConversion}"
+                insightsDemoData="{!insightsDemoData}"></c:DemoDashboard_Conversion>
+            <c:DemoDashboard_Insights rendered="{!dashboardDemo_pageInsights}"
+                insightsDemoData="{!insightsDemoData}"></c:DemoDashboard_Insights>
+        </apex:tab>
+    </apex:tabPanel> 
+</apex:page>

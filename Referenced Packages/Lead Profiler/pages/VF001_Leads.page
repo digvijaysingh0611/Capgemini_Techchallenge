@@ -1,0 +1,338 @@
+<apex:page controller="LeadsProfiler.CTRL001_Leads" extensions="LeadsProfiler.CTRL001_Leads" action="{!init}" tabStyle="Leads_Profiler__tab">
+     
+    <!-- Here we included the necessary jquery javascript and css files -->
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery-1.7.1.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery-ui-1.8.18.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery.tablesorter.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'js/jquery.tablesorter.pager.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__Downloadify,'js/swfobject.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__Downloadify,'js/downloadify.min.js')}"/>
+
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/jshashtable-2.1_src.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/jquery.numberformatter-1.2.3.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/tmpl.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/jquery.dependClass-0.1.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/draggable-0.1.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__jslider, 'js/jquery.slider.js')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'css/ui-lightness/jquery-ui-1.7.2.custom.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'css/tablesorter/style.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'css/tablesorter/jquery.tablesorter.pager.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__jslider, 'css/jslider.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__jslider, 'css/jslider.plastic.css')}" />
+    
+    <apex:includeScript value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'qtip2/jquery.qtip.js')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'qtip2/jquery.qtip.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.LeadsProfiler__sp_jquery, 'qtip2/modal.css')}" />
+    
+    <br/>
+    
+    <apex:outputPanel id="mainPanel" layout="block">
+        <apex:enhancedList rendered="{!!needSetupWizard}" type="{!objectType}" height="800" rowsPerPage="25" id="LeadList" customizable="True" oncomplete="waitForListReady(displayQtip, fixCreateEditLink);" />
+    </apex:outputPanel>    
+
+<!--     <div id="downloadify" style="float: right;" title="Export table to excel" rendered="{!!needSetupWizard}">
+        You must have Flash 10 installed to export to excel.
+    </div>
+ -->   
+    <div id="tooltipTemplate" style="display: none !important; visibility: hidden !important;">
+        <div class="user_item">
+            <div class="close"> </div>
+            <h1><span class="ico"> </span> <span class="user">{{User}}</span><div class="clearer"> </div></h1>
+            <div class="prob lead_rank {{Probability Range}} {{Arrow Class}}">{{Probability Delta}} Conversion Probability </div>
+            <ul>
+                <li><label>Buyer Persona: </label> <span class="val">{{Buyer Persona}} </span> </li>
+                <li><label>Company Profile:</label> <span class="val">{{Company Profile}} </span> </li>
+                <li><label>Vertical: </label> <span class="val">{{Vertical}} </span> </li>
+                <li class="{{Solution Fit Visibility}}"><label>Solution Fit: </label> <span class="val">{{Solution Fit}} </span> </li>
+            </ul>
+            <div class="more"><a target="_blank" href="/apex/vf002_LeadProfiler?objid={{Lead Id}}">More </a> </div>
+        </div>
+    </div> <!-- #tooltipTemplate -->
+    
+    <div id="settingsDialog" style="display:none"> 
+        <h3>
+            The installation process was not yet completed. <br/>Please complete Lead Profiler Installation, by following the remaining setup steps, using: <br/><a href="{!$Page.VF000_SettingsWizard}">Lead Profiler Settings</a>
+        </h3>
+    </div>
+    <div id="settingsDialog2" style="display:none"> 
+        <h3>
+            The installation process was not yet completed. <br/>Please ask your administrator to complete Lead Profiler installation, by following the remaining setup steps, <br/>using 'Lead Profiler Settings'.
+        </h3>
+    </div>
+    
+
+    <script type="text/javascript">
+          
+        function listReady(root) {
+            return root.find('.x-grid3-row').length;
+        }
+        
+        function waitForListReady(callback1, callback2) {
+            if (listReady($('[id$=LeadList_wrapper]'))) {
+                callback1();
+                callback2();
+            }
+            else
+                setTimeout(function(){waitForListReady(callback1, callback2)}, 500);
+        }
+        
+        var tooltipTemplateHtml;
+
+      
+        // because of a SalesForce bug in the view dropdown
+        // (create/edit view sometimes don't add "leadsprofiler" namespace to the retUrl prefix)
+        // we hack the create / edit link to the correct url
+        function fixCreateEditLink() {
+        
+        
+            $(".filterLinks").find('a').each(function () {
+                var href = $(this).attr('href');
+                var hrefLower = href.toLowerCase();
+                
+                var link_good = "leadsprofiler__vf001_profiler";
+                var link_bad = "vf001_profiler";
+
+                var linkStartIndex_good = hrefLower.indexOf(link_good);
+                var linkStartIndex_bad = hrefLower.indexOf(link_bad);
+                
+                // if link does not contain "leadsprofiler__VF001_Leads" and do contain "VF001_Leads" - replace
+                if (linkStartIndex_good == -1 && linkStartIndex_bad != -1) 
+                    $(this).attr('href', href.replace(/vf001_profiler/i, link_good));
+                
+            });
+        }
+    
+        $(document).ready(function() {
+            // load html div
+            tooltipTemplateHtml = $('#tooltipTemplate').html();
+            // load qTip - when the enhanced list table is available
+            waitForListReady(displayQtip, fixCreateEditLink);
+            
+            //createDownloadify();
+        });         
+        
+        // create the dynanic fields data 
+        function tooltipTemplate(v) {
+        
+            // add arrow image if delta is more than 54 or less than -20
+            var probDelta = v['ProbDelta'];
+            var arrowClass = '';
+            if (probDelta >= 54)
+                arrowClass = 'up';
+            else if (probDelta <= -20)
+                arrowClass = 'down';
+                
+            // create the delta number formatted
+            probDelta = v['ProbDelta'] + '%';
+            if (probDelta.substring(0, 1) != '-' && probDelta.substring(0, 1) != '+') 
+                probDelta = '+' + probDelta;
+                
+                
+            var newHtml =  tooltipTemplateHtml
+                .replace(/{{User}}/g, v['User'])
+                .replace(/{{Probability Delta}}/g, probDelta)
+                .replace(/{{Arrow Class}}/g, arrowClass)
+                .replace(/{{Probability Range}}/g, v['ProbRange'])
+                .replace(/{{Buyer Persona}}/g, v['Buyer'])
+                .replace(/{{Company Profile}}/g, v['Profile'])
+                .replace(/{{Vertical}}/g, v['Vertical'])
+                .replace(/{{Solution Fit}}/g, v['Fit'])
+                .replace(/{{Lead Id}}/g, v['Id']);
+                
+            // if no data in solution fit - hide all row
+            if (v['Fit'] && v['Fit'] != 'N/A')
+                newHtml = newHtml.replace(/{{Solution Fit Visibility}}/g, '');
+            else
+                newHtml = newHtml.replace(/{{Solution Fit Visibility}}/g, 'invisible');
+                
+                
+            return newHtml;
+        };
+        
+                  
+        // create the tooltip page
+        function displayQtip() {
+        
+            // find the image (all the info is in it's alt)
+            $('[id$=LeadList_wrapper]').find('img[alt]').each(function () {
+                try {
+                    var rank = $(this);
+                    var rank2 = $(this);
+                    
+                    if (rank.data('qtip'))
+                        return;
+                    // get the HTML with all data from json parsed into it
+                    var newDiv = $(tooltipTemplate(JSON.parse(rank.attr('alt'))));
+                    var newDiv2 = $(tooltipTemplate(JSON.parse(rank.attr('alt'))));
+                    // operate the close button - to execute the "hide" qtip command 
+                    newDiv.find('.close').click(function () { rank.qtip("hide"); });
+                    newDiv2.find('.close').click(function () {$(this).closest('.qtip').hide(); });
+                    
+                    
+                    // load the qtip for rank1 (hover) with all properties
+                    rank.qtip({
+                        content: newDiv,
+                        show: { 
+                            effect: true,
+                            event: 'mouseenter',
+                            effect: function(event) {
+                                $('.qtip').hide();
+                                $(this).fadeIn();
+                            },
+                            solo: true                  // Only show one tooltip at a time
+                        }, 
+                        hide: {
+                            fixed: true,
+                            delay: 300,
+                            effect: function() { $(this).fadeOut(); }
+                        },
+                        position: { 
+                            my: 'bottom right', 
+                            at: 'center left',
+                            adjust: { scroll: true }
+                        },
+                        style: { 
+                            width: 370,                 // Set the tooltip width
+                            classes: 'qtip-light qtip-shadow qtip-rounded',
+                            tip: { // this is the arrow into the tooltip
+                                corner: 'bottom right',
+                                mimic: 'bottom right',
+                                border: 2,
+                                width: 20,
+                                height: 20
+                            }
+                        }
+                    })
+                    
+                    // end qtip        
+                      
+                    // load the qtip for rank2 (on click) with all properties
+                    .removeData('qtip')
+                    .qtip({
+                        content: newDiv2,
+                        show: { 
+                            effect: true,
+                            event: 'click',
+                            effect: function(event) { $(this).fadeIn(); },
+                            solo: true                  // Only show one tooltip at a time
+                        }, 
+                         position: { 
+                            my: 'bottom right', 
+                            at: 'center left',
+                            adjust: { scroll: true }
+                        },
+                        style: { 
+                            width: 370,                 // Set the tooltip width
+                            classes: 'qtip-light qtip-shadow qtip-rounded',
+                            tip: { // this is the arrow into the tooltip
+                                corner: 'bottom right',
+                                mimic: 'bottom right',
+                                border: 2,
+                                width: 20,
+                                height: 20
+                            }
+                        },
+                        hide: {
+                            event: 'unfocus',
+                            fixed: true,
+                            delay: 300,
+                            effect: function() { $(this).fadeOut(); }
+                        }
+                    }); // end qtip
+                    
+                                        
+                } catch (e) {}
+            }); 
+        } // displayQtip()
+        
+   
+        var excDocStart = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+                        + '<html xmlns="http://www.w3.org/1999/xhtml">'
+                        + '<head>'
+                        +   '<title>Lead Profiler</title>'
+                        + '</head>'
+                        + '<body>';
+
+        var excDocEnd = '</body></html>';
+
+        
+        function createDownloadify() {
+            Downloadify.create('downloadify',{
+                filename: 'LeadProfiler.xls',
+                data: function(){
+                    return excelData();
+                },
+                onComplete: function(){ 
+                    downloadifyDialog.dialog('close');
+                    alert('Your File Has Been Saved!'); 
+                },
+                onCancel: function(){ 
+                    downloadifyDialog.dialog('close');
+                },
+                onError: function(){ 
+                    downloadifyDialog.dialog('close');
+                    alert('An error occured!'); 
+                },
+                swf: "{!URLFOR($Resource.downloadify,'media/downloadify.swf')}",
+                downloadImage: "{!URLFOR($Resource.downloadify,'images/excelExport.png')}",
+                width: 30,
+                height: 29,
+                transparent: true,
+                append: false
+            });
+        }
+                        
+        function excelData() {
+            var ele = $('<div></div>');
+            
+            var tHtml = $('.x-grid3-viewport').clone();
+            tHtml.find('img').remove();
+            tHtml.find("tr td:first-child").remove();
+            tHtml.find("tr td:first-child").remove();
+            tHtml.find("tr td:first-child").remove();
+           // debugger;
+            ele.append(tHtml.html().replace(/\<\/a\>/g,"<\span>").replace(/\<a/g,"<span"));
+
+            return  excDocStart +'<table>' + $(ele).html() + '</table>' + excDocEnd;
+        }
+        
+        var dialog;
+            
+        var initDialog = function (a) {
+            if (typeof(dialog) !== "undefined") 
+                dialog.dialog("destroy").remove();
+
+            dialog = $( "#"+a ).dialog({
+                        title: 'Lead Profiler installation is incomplete',
+                        height: 200 ,
+                        width: 450 ,
+                        modal: true,
+                        closeOnEscape: false,
+                        autoOpen: false,
+                        draggable: true,
+                        resizable: false,
+                        dialogClass: 'no-close'
+                    });
+                   
+            dialog.dialog("open");
+        }
+      
+        if({!AND(needSetupWizard, isSysAdmin)} ){
+            $('#downloadify').hide()
+            initDialog("settingsDialog");
+        } 
+        if({!AND(needSetupWizard, !isSysAdmin)} ){
+            $('#downloadify').hide()
+            initDialog("settingsDialog2");  
+        }
+        
+            
+        
+    </script>
+    
+    
+
+
+
+</apex:page>
