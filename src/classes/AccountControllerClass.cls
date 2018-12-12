@@ -4,7 +4,8 @@ public class AccountControllerClass {
     Public static List<Case> getAccList(){
         
         List<Case> caselist = [SELECT Id,CaseNumber,Origin,Subject,Status,Priority,Reason,ContactEmail FROM Case  ORDER BY CaseNumber DESC LIMIT 10];
-        return caselist;
+        return caselist; 
+		
     }
     @Auraenabled
     public static List<Case> delteAccountById(String accid)
